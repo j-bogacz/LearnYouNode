@@ -8,4 +8,7 @@ var buffer = fs.readFile(process.argv[2], "utf8", function (error, result) {
 		
 		console.log(noOfNewLines);
 	}
+	else {
+		console.error(error);
+	}
 });
