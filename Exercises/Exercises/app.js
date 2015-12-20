@@ -1,30 +1,12 @@
-﻿var fs = require("fs");
-var path = require("path");
-var filter = process.argv[3];
-//var _ = require("underscore");
+﻿var myModule = require("./myModule.js");
 
-fs.readdir(process.argv[2], function (error, filelist) {
+myModule(process.argv[2], process.argv[3], function (error, data) {
 	if (error) {
 		console.error(error);
-		return;
 	}
-	
-	for (var fileIndex in filelist) {
-		var file = filelist[fileIndex];
-
-		var ext = path.extname(file);
-		if (ext.slice(1, ext.l) === filter) {
-			console.log(file);
-		}
-
-		// Alternative soluntion
-		//_(filelist).each(function (f) {
-		//	console.log(f);
-		//});
-
-		// Alternative solution
-		//filelist.forEach(function (f) {
-		//	console.log(f);
-		//});
+	else {
+		data.forEach(function (item) {
+			console.log(item);
+		});
 	}
 });
