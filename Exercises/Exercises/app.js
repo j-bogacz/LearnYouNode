@@ -1,14 +1,19 @@
 ﻿var fs = require("fs");
+var path = require("path");
+var filter = process.argv[3];
 
-var buffer = fs.readFile(process.argv[2], "utf8", function (error, result) {
-	if (!error) {
-		var splitBuffer = result.split("\n");
-		
-		var noOfNewLines = splitBuffer.length - 1;
-		
-		console.log(noOfNewLines);
-	}
-	else {
+fs.readdir(process.argv[2], function (error, filelist) {
+	if (error) {
 		console.error(error);
+		return;
+	}
+	
+	for (var fileIndex in filelist) {
+		var file = filelist[fileIndex];
+
+		var ext = path.extname(file);
+		if (ext.slice(1, ext.l) === filter) {
+			console.log(file);
+		}
 	}
 });
