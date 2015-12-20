@@ -1,12 +1,9 @@
-﻿var myModule = require("./myModule.js");
+﻿var http = require("http");
 
-myModule(process.argv[2], process.argv[3], function (error, data) {
-	if (error) {
-		console.error(error);
-	}
-	else {
-		data.forEach(function (item) {
-			console.log(item);
-		});
-	}
+http.get(process.argv[2], function (response) {
+	response.setEncoding("utf8");
+	response.on("data", function (data) {
+		
+		console.log(data);
+	});
 });
