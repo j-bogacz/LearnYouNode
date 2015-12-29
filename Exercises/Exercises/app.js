@@ -1,40 +1,30 @@
-﻿var http = require("http");
-var url = require("url");
+﻿var http = require('http');
+var url = require('url');
 
-var port = process.argv[2];
-
-var server = http.createServer(function (request, response) {
-	if (request.method == 'GET') {
-		var parsedUrl = url.parse(request.url, true);
-		
-		var pathName = parsedUrl.pathname;
-		var query = parsedUrl.query;
-		
-		for (var element in query) {
-			if (element === "iso") {
-				var queryString = query[element];
-				
-				if (parsedUrl.pathname === "/api/parsetime") {
-					var parsedTime = new Date(queryString);
-					var time = {
-						hour: parsedTime.getHours(),
-						minute: parsedTime.getMinutes(),
-						second: parsedTime.getSeconds()
-					};
-
-					response.end(JSON.stringify(time));
-				}
-				if (parsedUrl.pathname === "/api/unixtime") {
-					var unixTime = {
-						unixtime: (new Date(queryString)).getTime()
-					};
-					
-					response.end(JSON.stringify(unixTime));
-				}
-			}
-		}
+var routes = {
+	"/api/parsetime": function (parsedUrl) {
+		d = new Date(parsedUrl.query.iso);
+		return {
+			hour: d.getHours(),
+			minute: d.getMinutes(),
+			second: d.getSeconds()
+		};
+	},
+	"/api/unixtime": function (parsedUrl) {
+		return { unixtime: (new Date(parsedUrl.query.iso)).getTime() };
 	}
-	response.end("You must use API");
-});
+}
 
-server.listen(port);
+server = http.createServer(function (request, response) {
+	parsedUrl = url.parse(request.url, true);
+	resource = routes[parsedUrl.pathname];
+	if (resource) {
+		response.writeHead(200, { "Content-Type": "application/json" });
+		response.end(JSON.stringify(resource(parsedUrl)));
+	}
+	else {
+		response.writeHead(404);
+		response.end();
+	}
+});
+server.listen(process.argv[2]);
